@@ -47,14 +47,80 @@ Edge (Sensor IoT) → Cloud Functions → Firestore → Dashboard & Alertas
 - Establecer requirements.txt inicial
 - Configurar project board
 
-**Milestone Investigación de tecnologías cloud**
+**Milestone 2: Investigación de tecnologías cloud**
 - Investigar AWS vs Google Cloud vs Azure
 - Comparar límites gratuitos
 - Decidir base de datos (Firestore vs DynamoDB)
 - Elegir servicio de funciones (Cloud Functions vs Lambda)
 
+**Milestone 3: Desarrollo del simulador de sensor**
+- Crear script Python en sensor-simulator/sensor.py
+- Generar datos realistas: temperatura, humedad, ubicación, acelerómetro
+- Implementar envío cada 5 segundos via HTTP POST
+- Usar librería Faker para datos creíbles
+- Formatear datos como JSON
 
+**Milestone 4: Pruebas del simulador**
+- Crear pruebas unitarias para generación de datos
+- Verificar formatos de timestamp y tipos de datos
+- Testear manejo de errores de red
+- Documentar cómo ejecutar las pruebas
 
+**Milestone 5: Configurar Cloud Functions**
+- Crear función en Google Cloud Functions con trigger HTTP
+- Configurar endpoint /api/telemetry
+- Validar JSON recibido del sensor
+- Implementar parsing de datos de telemetría
+- Devolver respuesta apropiada
+
+**Milestone 6: Configurar base de datos Firestore**
+- Crear base de datos Firestore
+- Diseñar schema
+- Implementar conexión desde Cloud Function
+- Crear índices necesarios
+- Probar escritura y lectura de datos
+
+**Milestone 7: Implementar lógica de detección**
+- Implementar regla: temperatura > 8.0 → alerta
+- Implementar regla: acelerometro_z > 3.0 → alerta
+- Implementar regla: humedad < 20 → alerta (opcional)
+- Guardar alertas en colección separada
+- Probar lógica con datos de prueba
+  (recuerda que esto son datos falsos solo para el readme,las verdaderas especificaciones de las metricas estan mas arriba)
+
+**Milestone 8: Configurar notificaciones Slack/Discord**
+- Crear webhook en Slack/Discord
+- Modificar Cloud Function para enviar mensajes al webhook
+- Formatear mensajes de alerta con información relevante
+- Probar envío de notificaciones
+
+**Milestone 9: Desarrollo del dashboard**
+- Conectar Looker Studio a Firestore
+- Crear visualización: mapa con última ubicación de envíos
+- Crear gráfico de series temporales para temperatura
+- Mostrar lista de alertas recientes
+- Configurar actualización automática
+
+**Milestone 10: Implementar KPIs de negocio**
+- KPI: % de envíos en SLA (sin alertas críticas)
+- KPI: Tiempo medio de detección (MTTD)
+- KPI: % de falsos positivos
+- Mostrar KPIs en dashboard
+- Documentar cálculos de métricas
+
+**Milestone 11: Implementar seguridad básica**
+- Configurar variables de entorno para credenciales
+- Validación de datos de entrada en Cloud Function
+- Implementar reintentos con backoff exponencial
+- Verificar que no hay credenciales en código
+- Configurar permisos mínimos en cloud
+
+**Milestone 12: Preparar presentación**
+- Crear slides de arquitectura y decisiones
+- Preparar guion para demo en vivo
+- Asignar roles para la presentación
+- Crear vídeo demo de 3-5 minutos
+- Preparar documentación final
 
 
 
