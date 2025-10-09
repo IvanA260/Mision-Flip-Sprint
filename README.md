@@ -1,6 +1,8 @@
 # 🌱 GreenDelivery - Sistema de Monitoreo IoT para Fresas 🍓🍓🍓
 
 **Flip Sprint - Sistema especializado en alerta temprana para cadena de frío de FRESAS 🍓🍓🍓**
+<img width="600" height="600" alt="image" src="https://github.com/user-attachments/assets/44cb1d30-c696-4fd4-bedb-28d5dac65cee" />
+
 
 ## 👥 Equipo
 - Daniel del Molino
@@ -33,11 +35,20 @@ Edge (Sensor IoT) → Cloud Functions → Firestore → Dashboard & Alertas
 
 ## 🚀 Milestones del Proyecto
 
-**Milestone 1: Fundaciones (Días 1-3)**
-- Configuración inicial del proyecto
-- Investigación de tecnologías cloud
-- Diseño de arquitectura
-- Especificaciones técnicas para fresas
+**Milestone 1: Configuración inicial del proyecto**
+- Crear estructura de carpetas
+- Configurar README.md principal
+- Configurar .gitignore
+- Establecer requirements.txt inicial
+- Configurar project board
+
+**Milestone Investigación de tecnologías cloud**
+- Investigar AWS vs Google Cloud vs Azure
+- Comparar límites gratuitos
+- Decidir base de datos (Firestore vs DynamoDB)
+- Elegir servicio de funciones (Cloud Functions vs Lambda)
+
+
 
 
 
