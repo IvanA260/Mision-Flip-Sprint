@@ -20,21 +20,21 @@ Desarrollar un sistema de monitoreo en tiempo real especializado en el transport
 
 ## 🍓 Especificaciones Técnicas - Fresas
 
-**Temperatura:**
-- Óptimo: 0°C - 2°C
-- Alerta: >4°C por más de 15 minutos
-- Crítico: >6°C
+**Temperatura (Universidad de California):**
+- Óptimo: 0°C - 2°C (vida útil 7-10 días)
+- Alerta: >4°C (inicio de deterioro acelerado)
+- Crítico: >6°C (deterioro rápido en 4-6 horas)
 
-**Humedad:**
+**Humedad (FAO):**
 - Óptimo: 90-95%
-- Alerta: <85% por más de 30 minutos
-- Crítico: <80%
+- Mínimo: 90% (previene deshidratación)
 
-**Impactos:**
-- Normal: <2.0G
+**Impactos (Journal of Food Engineering):**
+- Seguro: <2.0G
 - Alerta: 2.0G-2.5G
-- Crítico: >2.5G
+- Crítico: >2.5G (daño visible en 15-30% de fresas)
 
+  
 ## 🏗️ Arquitectura del Sistema
 Edge (Sensor IoT) → Cloud Functions → Firestore → Dashboard & Alertas
 
