@@ -69,3 +69,6 @@ Edge (Sensor IoT) → Cloud Functions → Firestore → Dashboard & Alertas
 - Número de impactos críticos por envío
 - Tasa de falsos positivos en alertas
 
+
+<img width="200" height="200" alt="image-removebg-preview (8)" src="https://github.com/user-attachments/assets/5aacbb0e-b3c6-4872-aa54-2f157ac1b3e6" />
+
