@@ -1,7 +1,8 @@
 # 🌱 GreenDelivery - Sistema de Monitoreo IoT para Fresas 🍓🍓🍓
 
 **Flip Sprint - Sistema especializado en alerta temprana para cadena de frío de FRESAS 🍓🍓🍓**
-<img width="600" height="600" alt="image" src="https://github.com/user-attachments/assets/44cb1d30-c696-4fd4-bedb-28d5dac65cee" />
+<img width="360" height="360" alt="image" src="https://github.com/user-attachments/assets/59a2457f-21c4-4075-a66e-c7f3f42a7b21" />
+
 
 
 ## 👥 Equipo
