@@ -3,7 +3,9 @@
 **Flip Sprint - Sistema especializado en alerta temprana para cadena de frío de FRESAS 🍓🍓🍓**
 
 
-<img width="160" height="160" alt="image" src="https://github.com/user-attachments/assets/59a2457f-21c4-4075-a66e-c7f3f42a7b21" />
+
+<img width="160" height="160" alt="image-removebg-preview (6)" src="https://github.com/user-attachments/assets/cea6e707-46e4-4d88-b908-767734b29b02" />
+
 
 
 
