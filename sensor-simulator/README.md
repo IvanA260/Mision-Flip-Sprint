@@ -1,0 +1,1 @@
+En esta carpeta ira el programa que simula el sensor

@@ -1,0 +1,1 @@
+En esta carpeta se guarda la base de datos del proyecto

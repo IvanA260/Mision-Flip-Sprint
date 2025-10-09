@@ -1,0 +1,1 @@
+En esta carpeta va la pantalla para poder visualizar el proyecto
