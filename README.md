@@ -4,16 +4,13 @@
 
 
 
-<img width="160" height="160" alt="image-removebg-preview (6)" src="https://github.com/user-attachments/assets/cea6e707-46e4-4d88-b908-767734b29b02" />
-
-
-
-
 ## 👥 Equipo
 - Daniel del Molino
 - Said Benjamin Velasquez  
 - Ivan Araujo
 - Alberto Salido
+
+<img width="160" height="160" alt="image-removebg-preview (6)" src="https://github.com/user-attachments/assets/cea6e707-46e4-4d88-b908-767734b29b02" />
 
 ## 🎯 Objetivo del Proyecto
 Desarrollar un sistema de monitoreo en tiempo real especializado en el transporte de fresas frescas, garantizando la cadena de frío (0-2°C) y detectando incidentes que puedan comprometer la calidad del producto.
