@@ -65,37 +65,67 @@ def generar_datos_fresas():
     return datos
 
 def enviar_datos(datos):
-    """Envía datos a la nube (por ahora solo los muestra)"""
+    """Envía datos automáticamente a Google Cloud Functions"""
     try:
+        # URL de producción - NO CAMBIAR
+        CLOUD_FUNCTION_URL = "https://europe-west1-green-delivery-fresas.cloudfunctions.net/process-telemetry"
+        
+        # Mostrar datos en consola
         print(f"📦 Envío: {datos['id_envio']}")
         print(f"🌡️  Temperatura: {datos['temperatura']}°C")
         print(f"💧 Humedad: {datos['humedad']}%")
         print(f"📊 Acelerómetro: {datos['acelerometro_z']}G")
         print(f"📍 Estado: {datos['estado']}")
         print(f"🕐 {datos['timestamp']}")
-        print("-" * 50)
         
-        # TODO: Aquí enviaremos a Google Cloud después
+        # Enviar a Cloud Function
+        response = requests.post(
+            CLOUD_FUNCTION_URL,
+            json=datos,
+            headers={'Content-Type': 'application/json'},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            estado_cloud = result.get('estado', 'desconocido')
+            print(f"✅ Cloud: {result['message']} - Estado: {estado_cloud}")
+            
+            # Indicar si se envió alerta a Discord
+            if estado_cloud in ['alerta', 'critico']:
+                print(f" Alerta enviada a Discord")
+                
+        else:
+            print(f" Error Cloud: {response.status_code} - {response.text}")
+        
+        print("-" * 50)
         return True
         
+    except requests.exceptions.RequestException as e:
+        print(f" Error de conexión: {e}")
+        return False
     except Exception as e:
-        print(f" Error enviando datos: {e}")
+        print(f" Error inesperado: {e}")
         return False
 
 def main():
-    print(" Iniciando simulador de sensor para FRESAS...")
-    print(" Simulando transporte en zona Madrid")
+    print(" SISTEMA GREEN DELIVERY - EN PRODUCCIÓN")
+    print(" Monitoreo de fresas en tiempo real")
     print(" Enviando datos cada 5 segundos")
+    print(" Alertas automáticas a Discord activadas")
+    print("  Umbrales: Normal(0-4°C) | Alerta(4-6°C) | Crítico(>6°C)")
+    print(" Presiona Ctrl+C para detener")
     print("=" * 50)
     
     try:
         while True:
+            # Generar y enviar datos automáticamente
             datos = generar_datos_fresas()
             enviar_datos(datos)
             time.sleep(5)  # Esperar 5 segundos
             
     except KeyboardInterrupt:
-        print("\n Simulador detenido por el usuario")
+        print("\n Sistema detenido")
 
 if __name__ == "__main__":
     main()
