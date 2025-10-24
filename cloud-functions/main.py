@@ -9,8 +9,8 @@ import os
 CONFIG_FRESAS = {
     'temperatura_optima_min': 0.0,
     'temperatura_optima_max': 2.0,
-    'temperatura_alerta': 4.0,
-    'temperatura_critica': 6.0,
+    'temperatura_alerta': 6.0,        # ← CAMBIADO de 4.0 a 6.0
+    'temperatura_critica': 10.0,      # ← CAMBIADO de 6.0 a 10.0
     'humedad_minima': 90.0,
     'aceleracion_maxima': 2.5
 }
