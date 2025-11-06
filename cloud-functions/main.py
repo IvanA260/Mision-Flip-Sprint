@@ -1,7 +1,7 @@
 import functions_framework
 from google.cloud import firestore
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import os
 
@@ -61,7 +61,17 @@ def process_telemetry(request):
         request_json['estado'] = estado
         
         # Guardar en Firestore
-        guardar_en_firestore(request_json)
+        db = guardar_en_firestore(request_json)
+
+        # 🔄 NUEVO: Calcular KPIs automáticos
+        try:
+            kpis = calcular_kpis_automaticos(request_json, db)
+            if kpis:
+                print(f"✅ KPIs guardados: {kpis['id_envio']} - Óptimo: {kpis['porcentaje_optimo']}%")
+                # 🔄 NUEVO: Guardar en formato optimizado para dashboard
+                guardar_kpis_dashboard(kpis, db)
+        except Exception as e:
+            print(f"⚠️ Error en cálculo de KPIs: {e}")
         
         # Si es crítico o alerta, enviar notificación automática
         if estado in ['alerta', 'critico']:
@@ -81,6 +91,110 @@ def process_telemetry(request):
             'message': f'Error procesando datos: {str(e)}'
         }), 500, headers
 
+def guardar_kpis_dashboard(kpis, db):
+    """Guarda KPIs en formato optimizado para dashboard"""
+    try:
+        # 🔄 AÑADIDO: Debug de entrada
+        print(f"🔍 DEBUG: Entrando a guardar_kpis_dashboard para {kpis.get('id_envio')}")
+        print(f"🔍 DEBUG: kpis recibidos: {kpis}")
+        
+        dashboard_data = {
+            'timestamp': kpis['timestamp'],
+            'porcentaje_optimo': kpis['porcentaje_optimo'],
+            'mttd_minutos': kpis['mttd_minutos'],
+            'total_alertas': kpis['total_alertas_24h'],
+            'temperatura_promedio': kpis['temperatura_promedio'],
+            'id_envio': kpis.get('id_envio', 'global'),
+            'tipo': 'kpi_automatico',
+            'procesado_en': datetime.now().isoformat()
+        }
+        
+        # 🔄 AÑADIDO: Debug de datos preparados
+        print(f"🔍 DEBUG: Datos preparados: {dashboard_data}")
+        print(f"🔍 DEBUG: Intentando guardar en colección kpis_dashboard...")
+        
+        # Guardar en nueva colección optimizada
+        doc_ref = db.collection('kpis_dashboard').document()
+        doc_ref.set(dashboard_data)
+        
+        print(f"📈 KPI Dashboard guardado: {dashboard_data['porcentaje_optimo']}% óptimo")
+        
+        # 🔄 AÑADIDO: Debug de éxito
+        print(f"🔍 DEBUG: Documento guardado con ID: {doc_ref.id}")
+        
+    except Exception as e:
+        # 🔄 MODIFICADO: Error más detallado
+        print(f"❌ ERROR CRÍTICO en guardar_kpis_dashboard: {str(e)}")
+        # 🔄 AÑADIDO: Traceback completo
+        import traceback
+        print(f"🔍 DEBUG: Traceback: {traceback.format_exc()}")
+        
+def calcular_kpis_automaticos(datos_actual, db):
+    """Calcula KPIs automáticamente con cada nuevo dato"""
+    try:
+        # Buscar el dato anterior del mismo envío
+        docs = db.collection('telemetria')\
+            .where('id_envio', '==', datos_actual.get('id_envio'))\
+            .order_by('timestamp', direction=firestore.Query.DESCENDING)\
+            .limit(2)\
+            .stream()
+        
+        datos_anteriores = [doc.to_dict() for doc in docs]
+        datos_anterior = datos_anteriores[1] if len(datos_anteriores) > 1 else None
+        
+        kpis = {
+            'porcentaje_optimo': 0,
+            'mttd_minutos': 0,
+            'total_alertas_24h': 0,
+            'temperatura_promedio': datos_actual.get('temperatura', 0),
+            'timestamp': datos_actual.get('timestamp'),
+            'id_envio': datos_actual.get('id_envio')
+        }
+        
+        # KPI 1: % en rango óptimo 0-2°C (para este dato específico)
+        if 0 <= datos_actual.get('temperatura', 100) <= 2:
+            kpis['porcentaje_optimo'] = 100  # Este dato está óptimo
+        else:
+            kpis['porcentaje_optimo'] = 0
+        
+        # KPI 2: Tiempo de detección (si pasó de normal a alerta/crítico)
+        if (datos_anterior and 
+            datos_anterior.get('estado') == 'normal' and 
+            datos_actual.get('estado') in ['alerta', 'critico']):
+            
+            try:
+                t_actual = datetime.fromisoformat(datos_actual['timestamp'].replace('Z', '+00:00'))
+                t_anterior = datetime.fromisoformat(datos_anterior['timestamp'].replace('Z', '+00:00'))
+                diferencia_minutos = (t_actual - t_anterior).total_seconds() / 60
+                kpis['mttd_minutos'] = round(diferencia_minutos, 2)
+                print(f"⏱️ MTTD calculado: {kpis['mttd_minutos']} minutos")
+            except Exception as e:
+                print(f"⚠️ Error calculando MTTD: {e}")
+                kpis['mttd_minutos'] = 0
+        
+        # KPI 3: Contar alertas en últimas 24 horas
+        try:
+            cutoff_time = datetime.now().replace(tzinfo=None) - timedelta(hours=24)
+            alertas = db.collection('telemetria')\
+                .where('timestamp', '>=', cutoff_time.isoformat())\
+                .where('estado', 'in', ['alerta', 'critico'])\
+                .count()\
+                .get()
+            kpis['total_alertas_24h'] = alertas[0][0].value if alertas else 0
+        except Exception as e:
+            print(f"⚠️ Error contando alertas: {e}")
+        
+        # Guardar KPIs en Firestore
+        kpi_ref = db.collection('kpis_automaticos').document()
+        kpi_ref.set(kpis)
+        
+        print(f"📊 KPIs calculados: {kpis}")
+        return kpis
+        
+    except Exception as e:
+        print(f"❌ Error calculando KPIs: {e}")
+        return None
+    
 def determinar_estado(datos):
     """Determina el estado del envío basado en los umbrales de fresas"""
     
@@ -97,7 +211,7 @@ def determinar_estado(datos):
 def guardar_en_firestore(datos):
     """Guarda los datos en Firestore"""
     try:
-        # Configurar Firestore
+        # Configurar Firestore (solo una vez)
         db = firestore.Client()
         
         # Crear referencia al documento
@@ -119,6 +233,9 @@ def guardar_en_firestore(datos):
         
         # Guardar en Firestore
         doc_ref.set(firestore_data)
+        
+        # Devolver db para usar en KPIs
+        return db
         
     except Exception as e:
         print(f"Error guardando en Firestore: {e}")
@@ -186,6 +303,7 @@ def enviar_alerta_discord(datos):
             
     except Exception as e:
         print(f"Error en alerta Discord: {e}")
+
 
 # Punto de entrada para Gen2
 if __name__ == "__main__":
